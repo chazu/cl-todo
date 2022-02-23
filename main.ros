@@ -1,0 +1,40 @@
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '() :silent t)
+  )
+
+(defpackage :ros.script.main.3853361201
+  (:use :cl))
+(in-package :ros.script.main.3853361201)
+
+(defun printline (string)
+  (prin1 string) (terpri))
+
+(defparameter *todos* '("foo" "bar"))
+
+(defun remove-nth (n list)
+  (declare
+    (type (integer 0) n)
+    (type list list))
+  (if (or (zerop n) (null list))
+    (cdr list)
+    (cons (car list) (remove-nth (1- n) (cdr list)))))
+
+(defun list-todos (&rest argv)
+  (declare (ignorable argv))
+  (mapcar (lambda (x) (printline x)) *todos*))
+
+(defun add-todo (string)
+  (setq *todos* (cons string *todos*)))
+
+(defun index-of-todo (item)
+  (position item *todos* :test #'equal))
+
+(defun remove-todo (index)
+  (setq *todos*
+        (remove-nth index *todos*)))
+;;; vim: set ft=lisp lisp:
