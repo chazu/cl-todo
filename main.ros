@@ -14,7 +14,14 @@ exec ros -Q -- $0 "$@"
 (defun printline (string)
   (prin1 string) (terpri))
 
-(defparameter *todos* '("foo" "bar"))
+(defstruct todo-item
+  (name "" :type string)
+  (description "" :type string)
+  (due-date 0 :type integer))
+
+(defparameter *todos*
+  (list (make-todo-item :name "foo")
+        (make-todo-item :name "bar")))
 
 (defun remove-nth (n list)
   (declare
@@ -30,10 +37,12 @@ exec ros -Q -- $0 "$@"
 ;; Public API
 (defun list-todos (&rest argv)
   (declare (ignorable argv))
-  (mapcar (lambda (x) (printline x)) *todos*))
+  (mapcar (lambda (x) (printline x) x) *todos*))
 
-(defun add-todo (string)
-  (setq *todos* (cons string *todos*)))
+;; TODO Handle default values for description and due-date
+(defun add-todo (name &key description due-date)
+  (setq *todos* (cons (make-todo-item :name name)
+                 *todos*)))
 
 (defun remove-todo (index)
   (setq *todos*
